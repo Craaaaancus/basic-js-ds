@@ -93,94 +93,72 @@ class BinarySearchTree {
         if (data == treeNode.data){
           return treeNode;
         }
-        if (data < treeNode.data){
+        else if (data < treeNode.data){
           if (treeNode.left === null){
             return null;
           }
           else{
             treeNode = treeNode.left;
           } 
-          continue;
         }
-        if (data > treeNode.data){
+        else if (data > treeNode.data){
           if (treeNode.right === null){
             return null;
           }
           else{
             treeNode = treeNode.right;
           } 
-          continue;
         }
       }
     }
   }
 
   remove(data) {
-    let nodeBefore = this.tree;
-    let treeNode = this.tree;
-    if (treeNode !== null) {
-      if (data == treeNode.data){
-        let nLeft = treeNode.left;
-        let nRight = treeNode.right;
-        if (nRight) {
-          if (!nLeft){
-            this.tree = this.tree.right;
-          }
-          else{
-            while(nLeft.right){
-              nLeft = nLeft.right;
-            }
-            nLeft.right = nRight;
-            this.tree = this.tree.left;
-          }
-        }
-        else if(nLeft){
-          this.tree = this.tree.left;
-        }
-        else{
-          this.tree = null;
-        }
-        return;
+    let node = this.tree
+    let prevNode = this.tree
+    if (!node) return
+    while(true){
+      if (data === node.data) break
+      else if (data < node.data){
+        if (!node.left) return
+        prevNode = node
+        node = node.left
       }
-      while(true){
-        if (data == treeNode.data){
-          if (nodeBefore.data < treeNode.data){
-            nodeBefore.right = treeNode.right;
-            if (!nodeBefore.right) nodeBefore.right = treeNode.left;
-            else nodeBefore.right.left = treeNode.left;
-          }
-          
-          if (nodeBefore.data > treeNode.data){
-            nodeBefore.left = treeNode.left;
-            if (!nodeBefore.left) nodeBefore.left = treeNode.right;
-            else nodeBefore.left.right = treeNode.right;
-          }
-         
-          treeNode = null;
-          break;
-        }
-        if (data < treeNode.data){
-          if (treeNode.left === null){
-            break;
-          }
-          else{
-            let temp = treeNode;
-            treeNode = treeNode.left;
-            nodeBefore = temp;
-          } 
-          continue;
-        }
-        if (data > treeNode.data){
-          if (treeNode.right === null){
-            break;
-          }
-          else{
-            let temp = treeNode;
-            treeNode = treeNode.right;
-            nodeBefore = temp;
-          } 
-          continue;
-        }
+      else if (data > node.data){
+        if (!node.right) return
+        prevNode = node
+        node = node.right
+      }
+    }
+
+    // case 1
+    if (!node.left && !node.right){
+      if (prevNode.left === node)  prevNode.left = null
+      if (prevNode.right === node) prevNode.right = null
+    } // case2
+    else if (!node.left || !node.right){
+      if (!node.left) {
+        if (prevNode.left === node) prevNode.left = node.right
+        else prevNode.right = node.right
+      }
+      else {
+        if (prevNode.left === node) prevNode.left = node.left
+        else prevNode.right = node.left
+      }
+    } // case 3
+    else {
+      let nextNode = node.right
+      let prevNode = node.right
+      while(nextNode.left){
+        prevNode = nextNode
+        nextNode = nextNode.left
+      }
+      node.data = nextNode.data
+      if (nextNode.right){
+        prevNode.left = nextNode.right
+      }
+      else {
+        prevNode.left = null
       }
     }
   }
